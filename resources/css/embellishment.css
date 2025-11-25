@@ -1,0 +1,218 @@
+/* Styles d'embellissement pour différentes catégories */
+.category-btp {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.category-maintenance {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.category-informatique {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+}
+
+.category-camera {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  color: white;
+}
+
+.category-logiciel {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  color: white;
+}
+
+.category-application {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  color: #333;
+}
+
+.category-site-internet {
+  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+  color: #333;
+}
+
+.category-piratage {
+  background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+  color: white;
+}
+
+.category-hacking {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  color: #333;
+}
+
+/* Styles pour les cartes avec images de fond */
+.card-btp {
+  background-image: url('/images/btp.jpg');
+  background-size: cover;
+  background-position: center;
+  min-height: 200px;
+}
+
+.card-maintenance {
+  background-image: url('/images/maintenance.jpg');
+  background-size: cover;
+  background-position: center;
+  min-height: 200px;
+}
+
+.card-informatique {
+  background-image: url('/images/informatique.jpg');
+  background-size: cover;
+  background-position: center;
+  min-height: 200px;
+}
+
+.card-camera {
+  background-image: url('/images/camera.jpg');
+  background-size: cover;
+  background-position: center;
+  min-height: 200px;
+}
+
+.card-logiciel {
+  background-image: url('/images/logiciel.jpg');
+  background-size: cover;
+  background-position: center;
+  min-height: 200px;
+}
+
+.card-application {
+  background-image: url('/images/application.jpg');
+  background-size: cover;
+  background-position: center;
+  min-height: 200px;
+}
+
+.card-site-internet {
+  background-image: url('/images/site-internet.jpg');
+  background-size: cover;
+  background-position: center;
+  min-height: 200px;
+}
+
+.card-piratage {
+  background-image: url('/images/piratage.jpg');
+  background-size: cover;
+  background-position: center;
+  min-height: 200px;
+}
+
+.card-hacking {
+  background-image: url('/images/hacking.jpg');
+  background-size: cover;
+  background-position: center;
+  min-height: 200px;
+}
+
+/* Effets d'animation et de transition */
+.animated-card {
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.animated-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Styles pour le fond de page */
+.page-background {
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+}
+
+/* Styles pour la zone de recherche */
+.search-form {
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.5rem 1rem 0.5rem 2.5rem;
+  border-radius: 9999px;
+  border: 1px solid #d1d5db;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+}
+
+.search-button {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  transition: color 0.3s ease;
+}
+
+.search-button:hover {
+  color: #3b82f6;
+}
+
+/* Dégradés de fond pour différentes pages */
+.bg-btp {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%), url('/images/btp-bg.jpg');
+  background-size: cover;
+}
+
+.bg-maintenance {
+  background: linear-gradient(135deg, rgba(240, 147, 251, 0.8) 0%, rgba(245, 87, 108, 0.8) 100%), url('/images/maintenance-bg.jpg');
+  background-size: cover;
+}
+
+.bg-informatique {
+  background: linear-gradient(135deg, rgba(79, 172, 254, 0.8) 0%, rgba(0, 242, 254, 0.8) 100%), url('/images/informatique-bg.jpg');
+  background-size: cover;
+}
+
+.bg-camera {
+  background: linear-gradient(135deg, rgba(67, 233, 123, 0.8) 0%, rgba(56, 249, 215, 0.8) 100%), url('/images/camera-bg.jpg');
+  background-size: cover;
+}
+
+.bg-logiciel {
+  background: linear-gradient(135deg, rgba(250, 112, 154, 0.8) 0%, rgba(254, 225, 64, 0.8) 100%), url('/images/logiciel-bg.jpg');
+  background-size: cover;
+}
+
+.bg-application {
+  background: linear-gradient(135deg, rgba(168, 237, 234, 0.8) 0%, rgba(254, 214, 227, 0.8) 100%), url('/images/application-bg.jpg');
+  background-size: cover;
+}
+
+.bg-site-internet {
+  background: linear-gradient(135deg, rgba(255, 154, 158, 0.8) 0%, rgba(254, 207, 239, 0.8) 100%), url('/images/site-internet-bg.jpg');
+  background-size: cover;
+}
+
+.bg-piratage {
+  background: linear-gradient(135deg, rgba(161, 140, 209, 0.8) 0%, rgba(251, 194, 235, 0.8) 100%), url('/images/piratage-bg.jpg');
+  background-size: cover;
+}
+
+.bg-hacking {
+  background: linear-gradient(135deg, rgba(255, 236, 210, 0.8) 0%, rgba(252, 182, 159, 0.8) 100%), url('/images/hacking-bg.jpg');
+  background-size: cover;
+}
