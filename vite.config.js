@@ -10,6 +10,11 @@ export default defineConfig({
                 'resources/css/responsive.css',
                 'resources/css/placeholders.css',
                 'resources/css/home.css',
+                'resources/css/video-section.css',
+                'resources/css/typography.css',
+                'resources/css/forms.css',
+                'resources/css/tables.css',
+                'resources/css/footer.css',
                 'resources/js/app.js'
             ],
             refresh: true,

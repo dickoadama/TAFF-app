@@ -46,4 +46,10 @@ class Artisan extends Model
     {
         return $this->hasMany(Review::class);
     }
+
+    // Relation avec les réalisations de l'artisan
+    public function works()
+    {
+        return $this->hasMany(ArtisanWork::class);
+    }
 }

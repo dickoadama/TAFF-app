@@ -14,6 +14,7 @@ class HomeController extends Controller
         // Récupérer des données pour la page d'accueil
         $featuredArtisans = Artisan::where('available', true)
             ->orderBy('rating', 'desc')
+            ->orderBy('id', 'asc') // Ajout d'un tri secondaire pour éviter les doublons
             ->limit(3)
             ->get();
             

@@ -4,6 +4,9 @@
   position: relative;
   overflow: hidden;
   padding: 4rem 0;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  border-radius: 2rem;
+  margin: 2rem 0;
 }
 
 .home-hero::before {
@@ -23,6 +26,8 @@
 
 .home-section {
   margin-bottom: 4rem;
+  position: relative;
+  padding: 2rem 0;
 }
 
 .home-section-title {
@@ -47,11 +52,16 @@
   border: 1px solid #e5e7eb;
   overflow: hidden;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+  opacity: 1;
+  position: relative;
+  backdrop-filter: blur(10px);
 }
 
 .service-card:hover {
   transform: translateY(-0.5rem);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  animation: pulse 1.5s infinite;
 }
 
 .service-icon-container {
@@ -77,6 +87,10 @@
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   border: 1px solid #e5e7eb;
   padding: 2rem;
+  transform: translateY(0);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .stat-card {
@@ -86,6 +100,8 @@
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   text-align: center;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
 .stat-card:hover {
@@ -111,6 +127,7 @@
   border: 1px solid #e5e7eb;
   overflow: hidden;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
 .artisan-card:hover {
@@ -136,6 +153,10 @@
   position: relative;
   overflow: hidden;
   padding: 2rem 0;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+  border-radius: 2rem;
+  margin: 2rem 0;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
 .floating-card {
@@ -147,6 +168,8 @@
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   transform: translateY(0);
   animation: float 4s ease-in-out infinite;
+  backdrop-filter: blur(5px);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .floating-card:hover {
@@ -185,8 +208,111 @@
   }
 }
 
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes slideInLeft {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  0% {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .floating {
   animation: float 3s ease-in-out infinite;
+}
+
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+.bounce-animation {
+  animation: bounce 1s ease infinite;
+}
+
+.slide-in-left {
+  animation: slideInLeft 0.5s ease-out forwards;
+}
+
+.slide-in-right {
+  animation: slideInRight 0.5s ease-out forwards;
+}
+
+.slide-in-up {
+  animation: slideInUp 0.5s ease-out forwards;
+}
+
+.fade-in {
+  animation: fadeIn 0.8s ease-in forwards;
+}
+
+.rotate-animation {
+  animation: rotate 4s linear infinite;
 }
 
 /* Effets de survol */

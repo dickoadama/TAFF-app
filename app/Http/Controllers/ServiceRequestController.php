@@ -3,11 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ServiceRequest;
-use App\Models\ServiceCategory;
 use App\Models\Artisan;
-use App\Models\Quote;
-use App\Models\Invoice;
+use App\Models\ServiceCategory;
 
 class ServiceRequestController extends Controller
 {
@@ -18,7 +15,12 @@ class ServiceRequestController extends Controller
      */
     public function index()
     {
-        $serviceRequests = ServiceRequest::with(['user', 'artisan', 'serviceCategory'])->latest()->paginate(10);
+        // Récupérer les demandes de service de l'utilisateur connecté
+        $serviceRequests = \App\Models\ServiceRequest::with(['serviceCategory', 'artisan'])
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->paginate(10);
+            
         return view('service-requests.index', compact('serviceRequests'));
     }
 
@@ -27,11 +29,19 @@ class ServiceRequestController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        $serviceCategories = ServiceCategory::all();
+        // Récupérer l'artisan sélectionné s'il est passé en paramètre
+        $selectedArtisan = null;
+        if ($request->has('artisan_id')) {
+            $selectedArtisan = Artisan::find($request->artisan_id);
+        }
+        
+        // Récupérer tous les artisans et catégories de service
         $artisans = Artisan::all();
-        return view('service-requests.create', compact('serviceCategories', 'artisans'));
+        $serviceCategories = ServiceCategory::all();
+        
+        return view('service-requests.create', compact('artisans', 'serviceCategories', 'selectedArtisan'));
     }
 
     /**
@@ -44,25 +54,29 @@ class ServiceRequestController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'service_category_id' => 'required|exists:service_categories,id',
-            'artisan_id' => 'nullable|exists:artisans,id',
             'description' => 'required|string',
-            'address' => 'nullable|string',
+            'service_category_id' => 'required|exists:service_categories,id',
+            'artisan_id' => 'required|exists:artisans,id',
             'preferred_date' => 'nullable|date',
+            'budget' => 'nullable|numeric|min:0',
+            'address' => 'nullable|string|max:255',
         ]);
-
-        $serviceRequest = ServiceRequest::create([
-            'user_id' => auth()->id(),
-            'title' => $request->title,
-            'service_category_id' => $request->service_category_id,
-            'artisan_id' => $request->artisan_id,
-            'description' => $request->description,
-            'address' => $request->address,
-            'preferred_date' => $request->preferred_date,
-            'status' => 'pending',
-        ]);
-
-        return redirect()->route('service-requests.index')->with('success', 'Demande de service créée avec succès.');
+        
+        // Créer la demande de service
+        $serviceRequest = new \App\Models\ServiceRequest();
+        $serviceRequest->title = $request->title;
+        $serviceRequest->description = $request->description;
+        $serviceRequest->service_category_id = $request->service_category_id;
+        $serviceRequest->artisan_id = $request->artisan_id;
+        $serviceRequest->preferred_date = $request->preferred_date;
+        $serviceRequest->budget = $request->budget;
+        $serviceRequest->address = $request->address;
+        $serviceRequest->user_id = auth()->id(); // Associer à l'utilisateur connecté
+        $serviceRequest->status = 'pending'; // Statut initial
+        $serviceRequest->save();
+        
+        return redirect()->route('service-requests.index')
+            ->with('success', 'Votre demande de service a été envoyée avec succès à l\'artisan.');
     }
 
     /**
@@ -73,7 +87,11 @@ class ServiceRequestController extends Controller
      */
     public function show($id)
     {
-        $serviceRequest = ServiceRequest::with(['user', 'artisan', 'serviceCategory', 'quotes.artisan', 'quote', 'invoice'])->findOrFail($id);
+        // Récupérer la demande de service avec ses relations
+        $serviceRequest = \App\Models\ServiceRequest::with(['serviceCategory', 'artisan', 'user'])
+            ->where('user_id', auth()->id()) // S'assurer que l'utilisateur a accès à cette demande
+            ->findOrFail($id);
+            
         return view('service-requests.show', compact('serviceRequest'));
     }
 
@@ -85,10 +103,7 @@ class ServiceRequestController extends Controller
      */
     public function edit($id)
     {
-        $serviceRequest = ServiceRequest::findOrFail($id);
-        $serviceCategories = ServiceCategory::all();
-        $artisans = Artisan::all();
-        return view('service-requests.edit', compact('serviceRequest', 'serviceCategories', 'artisans'));
+        //
     }
 
     /**
@@ -100,20 +115,7 @@ class ServiceRequestController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'service_category_id' => 'required|exists:service_categories,id',
-            'artisan_id' => 'nullable|exists:artisans,id',
-            'description' => 'required|string',
-            'address' => 'nullable|string',
-            'preferred_date' => 'nullable|date',
-            'status' => 'required|in:pending,accepted,in_progress,completed,cancelled',
-        ]);
-
-        $serviceRequest = ServiceRequest::findOrFail($id);
-        $serviceRequest->update($request->all());
-
-        return redirect()->route('service-requests.index')->with('success', 'Demande de service mise à jour avec succès.');
+        //
     }
 
     /**
@@ -124,79 +126,6 @@ class ServiceRequestController extends Controller
      */
     public function destroy($id)
     {
-        $serviceRequest = ServiceRequest::findOrFail($id);
-        $serviceRequest->delete();
-        
-        return redirect()->route('service-requests.index')->with('success', 'Demande de service supprimée avec succès.');
-    }
-
-    /**
-     * Select a quote for the service request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function selectQuote(Request $request, $id)
-    {
-        $serviceRequest = ServiceRequest::findOrFail($id);
-        $quote = Quote::findOrFail($request->quote_id);
-
-        // Vérifier que le devis appartient à cette demande de service
-        if ($quote->service_request_id != $serviceRequest->id) {
-            return redirect()->back()->with('error', 'Ce devis n\'appartient pas à cette demande de service.');
-        }
-
-        // Mettre à jour la demande de service avec le devis sélectionné
-        $serviceRequest->update(['quote_id' => $quote->id]);
-
-        return redirect()->back()->with('success', 'Devis sélectionné avec succès.');
-    }
-
-    /**
-     * Generate an invoice from the selected quote.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function generateInvoice($id)
-    {
-        $serviceRequest = ServiceRequest::with('quote')->findOrFail($id);
-
-        // Vérifier qu'un devis est sélectionné
-        if (!$serviceRequest->quote) {
-            return redirect()->back()->with('error', 'Aucun devis sélectionné pour cette demande de service.');
-        }
-
-        // Vérifier que le devis est accepté
-        if ($serviceRequest->quote->status != 'accepted') {
-            return redirect()->back()->with('error', 'Le devis doit être accepté pour générer une facture.');
-        }
-
-        // Vérifier qu'aucune facture n'existe déjà pour cette demande
-        if ($serviceRequest->invoice_id) {
-            return redirect()->back()->with('error', 'Une facture existe déjà pour cette demande de service.');
-        }
-
-        // Générer un numéro de facture unique
-        $invoiceNumber = 'INV-' . date('Y') . '-' . str_pad(rand(1, 99999), 5, '0', STR_PAD_LEFT);
-
-        // Créer la facture
-        $invoice = Invoice::create([
-            'quote_id' => $serviceRequest->quote_id,
-            'user_id' => $serviceRequest->user_id,
-            'artisan_id' => $serviceRequest->quote->artisan_id,
-            'invoice_number' => $invoiceNumber,
-            'amount' => $serviceRequest->quote->amount,
-            'issued_date' => now(),
-            'due_date' => now()->addDays(30),
-            'status' => 'pending',
-            'notes' => 'Facture générée automatiquement à partir du devis #' . $serviceRequest->quote->id,
-        ]);
-
-        // Mettre à jour la demande de service avec la facture
-        $serviceRequest->update(['invoice_id' => $invoice->id]);
-
-        return redirect()->back()->with('success', 'Facture générée avec succès.');
+        //
     }
 }

@@ -12,6 +12,9 @@ class Quote extends Model
     protected $fillable = [
         'service_request_id',
         'artisan_id',
+        'product_id',
+        'price_ht',
+        'tax_rate',
         'amount',
         'description',
         'valid_until',
@@ -26,6 +29,11 @@ class Quote extends Model
     public function artisan()
     {
         return $this->belongsTo(Artisan::class);
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
     }
 
     public function invoice()

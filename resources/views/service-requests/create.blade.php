@@ -2,30 +2,23 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Créer une demande de service</h1>
-        <a href="{{ route('service-requests.index') }}" class="btn-secondary">
-            <i class="fas fa-arrow-left mr-2"></i>Retour à la liste
-        </a>
-    </div>
-
     <div class="card">
+        <div class="card-header">
+            <h1 class="text-2xl font-bold">Créer une demande de service</h1>
+        </div>
         <div class="card-body">
-            <form action="{{ route('service-requests.store') }}" method="POST">
+            <p class="text-gray-600 mb-6">
+                Remplissez le formulaire ci-dessous pour demander un service à un artisan.
+            </p>
+            
+            <form action="{{ route('service-requests.store') }}" method="POST" class="space-y-6">
                 @csrf
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Titre *</label>
-                        <input type="text" name="title" id="title" class="form-input w-full" value="{{ old('title') }}" required>
-                        @error('title')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    
-                    <div>
-                        <label for="service_category_id" class="block text-sm font-medium text-gray-700 mb-2">Catégorie de service *</label>
-                        <select name="service_category_id" id="service_category_id" class="form-input w-full" required>
+                    <!-- Catégorie de service -->
+                    <div class="form-group">
+                        <label for="service_category_id" class="form-label">Catégorie de service *</label>
+                        <select name="service_category_id" id="service_category_id" class="form-input" required>
                             <option value="">Sélectionnez une catégorie</option>
                             @foreach($serviceCategories as $category)
                                 <option value="{{ $category->id }}" {{ old('service_category_id') == $category->id ? 'selected' : '' }}>
@@ -34,53 +27,88 @@
                             @endforeach
                         </select>
                         @error('service_category_id')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            <div class="text-danger mt-1">{{ $message }}</div>
                         @enderror
                     </div>
                     
-                    <div>
-                        <label for="artisan_id" class="block text-sm font-medium text-gray-700 mb-2">Artisan (optionnel)</label>
-                        <select name="artisan_id" id="artisan_id" class="form-input w-full">
-                            <option value="">Sélectionnez un artisan (optionnel)</option>
-                            @foreach($artisans as $artisan)
-                                <option value="{{ $artisan->id }}" {{ old('artisan_id') == $artisan->id ? 'selected' : '' }}>
-                                    {{ $artisan->name }}
+                    <!-- Artisan -->
+                    <div class="form-group">
+                        <label for="artisan_id" class="form-label">Artisan *</label>
+                        <select name="artisan_id" id="artisan_id" class="form-input" required>
+                            <option value="">Sélectionnez un artisan</option>
+                            @if($selectedArtisan)
+                                <option value="{{ $selectedArtisan->id }}" selected>
+                                    {{ $selectedArtisan->name }} ({{ $selectedArtisan->serviceCategory->name ?? 'Catégorie non définie' }})
                                 </option>
+                            @endif
+                            @foreach($artisans as $artisan)
+                                @if(!$selectedArtisan || $artisan->id != $selectedArtisan->id)
+                                    <option value="{{ $artisan->id }}" {{ old('artisan_id') == $artisan->id ? 'selected' : '' }}>
+                                        {{ $artisan->name }} ({{ $artisan->serviceCategory->name ?? 'Catégorie non définie' }})
+                                    </option>
+                                @endif
                             @endforeach
                         </select>
                         @error('artisan_id')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    
-                    <div>
-                        <label for="preferred_date" class="block text-sm font-medium text-gray-700 mb-2">Date préférée</label>
-                        <input type="datetime-local" name="preferred_date" id="preferred_date" class="form-input w-full" value="{{ old('preferred_date') }}">
-                        @error('preferred_date')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    
-                    <div class="md:col-span-2">
-                        <label for="address" class="block text-sm font-medium text-gray-700 mb-2">Adresse</label>
-                        <textarea name="address" id="address" rows="3" class="form-input w-full">{{ old('address') }}</textarea>
-                        @error('address')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    
-                    <div class="md:col-span-2">
-                        <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description *</label>
-                        <textarea name="description" id="description" rows="5" class="form-input w-full" required>{{ old('description') }}</textarea>
-                        @error('description')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            <div class="text-danger mt-1">{{ $message }}</div>
                         @enderror
                     </div>
                 </div>
                 
-                <div class="mt-6">
+                <!-- Titre de la demande -->
+                <div class="form-group">
+                    <label for="title" class="form-label">Titre de la demande *</label>
+                    <input type="text" name="title" id="title" class="form-input" value="{{ old('title') }}" required placeholder="Ex: Réparation de fuite d'eau dans la cuisine">
+                    @error('title')
+                        <div class="text-danger mt-1">{{ $message }}</div>
+                    @enderror
+                </div>
+                
+                <!-- Description détaillée -->
+                <div class="form-group">
+                    <label for="description" class="form-label">Description détaillée *</label>
+                    <textarea name="description" id="description" rows="5" class="form-input" required placeholder="Décrivez en détail le service que vous souhaitez demander...">{{ old('description') }}</textarea>
+                    @error('description')
+                        <div class="text-danger mt-1">{{ $message }}</div>
+                    @enderror
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Date souhaitée -->
+                    <div class="form-group">
+                        <label for="preferred_date" class="form-label">Date souhaitée</label>
+                        <input type="date" name="preferred_date" id="preferred_date" class="form-input" value="{{ old('preferred_date') }}">
+                        @error('preferred_date')
+                            <div class="text-danger mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    
+                    <!-- Budget estimé -->
+                    <div class="form-group">
+                        <label for="budget" class="form-label">Budget estimé (FCFA)</label>
+                        <input type="number" name="budget" id="budget" class="form-input" value="{{ old('budget') }}" min="0" placeholder="Ex: 50000">
+                        @error('budget')
+                            <div class="text-danger mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+                
+                <!-- Adresse -->
+                <div class="form-group">
+                    <label for="address" class="form-label">Adresse où réaliser le service</label>
+                    <input type="text" name="address" id="address" class="form-input" value="{{ old('address') }}" placeholder="Adresse complète du lieu d'intervention">
+                    @error('address')
+                        <div class="text-danger mt-1">{{ $message }}</div>
+                    @enderror
+                </div>
+                
+                <!-- Actions -->
+                <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+                    <a href="{{ route('service-requests.index') }}" class="btn-secondary">
+                        <i class="fas fa-arrow-left mr-2"></i>Retour à la liste
+                    </a>
                     <button type="submit" class="btn-primary">
-                        <i class="fas fa-save mr-2"></i>Créer la demande
+                        <i class="fas fa-paper-plane mr-2"></i>Envoyer la demande
                     </button>
                 </div>
             </form>

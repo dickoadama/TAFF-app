@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Quote;
 use App\Models\ServiceRequest;
 use App\Models\Artisan;
+use App\Models\Product;
 
 class QuoteController extends Controller
 {
@@ -29,7 +30,8 @@ class QuoteController extends Controller
     {
         $serviceRequests = ServiceRequest::whereDoesntHave('quotes')->get();
         $artisans = Artisan::all();
-        return view('quotes.create', compact('serviceRequests', 'artisans'));
+        $products = Product::orderBy('name')->get();
+        return view('quotes.create', compact('serviceRequests', 'artisans', 'products'));
     }
 
     /**
@@ -43,6 +45,9 @@ class QuoteController extends Controller
         $request->validate([
             'service_request_id' => 'required|exists:service_requests,id',
             'artisan_id' => 'required|exists:artisans,id',
+            'product_id' => 'nullable|exists:products,id',
+            'price_ht' => 'nullable|numeric|min:0',
+            'tax_rate' => 'nullable|numeric|min:0|max:100',
             'amount' => 'required|numeric|min:0',
             'description' => 'nullable|string',
             'valid_until' => 'nullable|date|after:today',
@@ -76,7 +81,8 @@ class QuoteController extends Controller
         $quote = Quote::findOrFail($id);
         $serviceRequests = ServiceRequest::all();
         $artisans = Artisan::all();
-        return view('quotes.edit', compact('quote', 'serviceRequests', 'artisans'));
+        $products = Product::orderBy('name')->get();
+        return view('quotes.edit', compact('quote', 'serviceRequests', 'artisans', 'products'));
     }
 
     /**
@@ -91,6 +97,9 @@ class QuoteController extends Controller
         $request->validate([
             'service_request_id' => 'required|exists:service_requests,id',
             'artisan_id' => 'required|exists:artisans,id',
+            'product_id' => 'nullable|exists:products,id',
+            'price_ht' => 'nullable|numeric|min:0',
+            'tax_rate' => 'nullable|numeric|min:0|max:100',
             'amount' => 'required|numeric|min:0',
             'description' => 'nullable|string',
             'valid_until' => 'nullable|date|after:today',

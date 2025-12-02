@@ -46,7 +46,29 @@
                     </div>
                     
                     <div>
-                        <label for="amount" class="block text-sm font-medium text-gray-700 mb-2">Montant *</label>
+                        <label for="product_id" class="block text-sm font-medium text-gray-700 mb-2">Marchandise</label>
+                        <select name="product_id" id="product_id" class="form-input w-full">
+                            <option value="">Sélectionnez une marchandise</option>
+                            @foreach($products as $product)
+                                <option value="{{ $product->id }}" {{ old('product_id') == $product->id ? 'selected' : '' }}>
+                                    {{ $product->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="price_ht" class="block text-sm font-medium text-gray-700 mb-2">Prix HT (€)</label>
+                        <input type="number" step="0.01" name="price_ht" id="price_ht" class="form-input w-full" value="{{ old('price_ht') }}" readonly>
+                    </div>
+                    
+                    <div>
+                        <label for="tax_rate" class="block text-sm font-medium text-gray-700 mb-2">TVA (%)</label>
+                        <input type="number" step="0.01" name="tax_rate" id="tax_rate" class="form-input w-full" value="{{ old('tax_rate') }}" readonly>
+                    </div>
+                    
+                    <div>
+                        <label for="amount" class="block text-sm font-medium text-gray-700 mb-2">Prix TTC (€) *</label>
                         <input type="number" step="0.01" name="amount" id="amount" class="form-input w-full" value="{{ old('amount') }}" required>
                         @error('amount')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -79,4 +101,43 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const productSelect = document.getElementById('product_id');
+    const priceHtInput = document.getElementById('price_ht');
+    const taxRateInput = document.getElementById('tax_rate');
+    const amountInput = document.getElementById('amount');
+    
+    productSelect.addEventListener('change', function() {
+        const productId = this.value;
+        
+        if (productId) {
+            fetch(`/products/get-product-details/${productId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.error) {
+                        priceHtInput.value = data.price_ht.toFixed(2);
+                        taxRateInput.value = data.tax_rate.toFixed(2);
+                        amountInput.value = data.price_ttc.toFixed(2);
+                    } else {
+                        priceHtInput.value = '';
+                        taxRateInput.value = '';
+                        amountInput.value = '';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    priceHtInput.value = '';
+                    taxRateInput.value = '';
+                    amountInput.value = '';
+                });
+        } else {
+            priceHtInput.value = '';
+            taxRateInput.value = '';
+            amountInput.value = '';
+        }
+    });
+});
+</script>
 @endsection

@@ -1,218 +1,394 @@
-/* Styles d'embellissement pour différentes catégories */
-.category-btp {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+/* Embellishments CSS */
+
+/* Gradient Backgrounds */
+.gradient-bg-primary {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
 }
 
-.category-maintenance {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  color: white;
+.gradient-bg-secondary {
+  background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
 }
 
-.category-informatique {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
+.gradient-bg-accent {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
 }
 
-.category-camera {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  color: white;
+/* Text Gradients */
+.text-gradient-primary {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.category-logiciel {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-  color: white;
+.text-gradient-secondary {
+  background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.category-application {
-  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-  color: #333;
+/* Animated Elements */
+.animated-border {
+  position: relative;
+  overflow: hidden;
 }
 
-.category-site-internet {
-  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-  color: #333;
+.animated-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transition: 0.5s;
 }
 
-.category-piratage {
-  background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
-  color: white;
+.animated-border:hover::before {
+  left: 100%;
 }
 
-.category-hacking {
-  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-  color: #333;
+.pulse-animation {
+  animation: pulse 2s infinite;
 }
 
-/* Styles pour les cartes avec images de fond */
-.card-btp {
-  background-image: url('/images/btp.jpg');
-  background-size: cover;
-  background-position: center;
-  min-height: 200px;
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+  }
 }
 
-.card-maintenance {
-  background-image: url('/images/maintenance.jpg');
-  background-size: cover;
-  background-position: center;
-  min-height: 200px;
+.float-animation {
+  animation: float 3s ease-in-out infinite;
 }
 
-.card-informatique {
-  background-image: url('/images/informatique.jpg');
-  background-size: cover;
-  background-position: center;
-  min-height: 200px;
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
 }
 
-.card-camera {
-  background-image: url('/images/camera.jpg');
-  background-size: cover;
-  background-position: center;
-  min-height: 200px;
+/* Glowing Effects */
+.glow-primary {
+  box-shadow: 0 0 15px rgba(37, 99, 235, 0.5);
 }
 
-.card-logiciel {
-  background-image: url('/images/logiciel.jpg');
-  background-size: cover;
-  background-position: center;
-  min-height: 200px;
+.glow-secondary {
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
 }
 
-.card-application {
-  background-image: url('/images/application.jpg');
-  background-size: cover;
-  background-position: center;
-  min-height: 200px;
+.glow-success {
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
 }
 
-.card-site-internet {
-  background-image: url('/images/site-internet.jpg');
-  background-size: cover;
-  background-position: center;
-  min-height: 200px;
-}
-
-.card-piratage {
-  background-image: url('/images/piratage.jpg');
-  background-size: cover;
-  background-position: center;
-  min-height: 200px;
-}
-
-.card-hacking {
-  background-image: url('/images/hacking.jpg');
-  background-size: cover;
-  background-position: center;
-  min-height: 200px;
-}
-
-/* Effets d'animation et de transition */
-.animated-card {
+/* Hover Effects */
+.hover-lift {
   transition: all 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.hover-scale {
+  transition: all 0.3s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+/* Shadows */
+.shadow-soft {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.animated-card:hover {
+.shadow-medium {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-hard {
+  box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Rounded Corners */
+.rounded-xl {
+  border-radius: 1rem;
+}
+
+.rounded-2xl {
+  border-radius: 1.25rem;
+}
+
+.rounded-3xl {
+  border-radius: 1.5rem;
+}
+
+/* Search Icon Styles */
+.search-icon {
+  transition: all 0.3s ease;
+}
+
+.search-input:focus + .search-icon-wrapper .search-icon {
+  color: #f59e0b;
+  transform: scale(1.1);
+}
+
+/* Button Enhancements */
+.btn-enhanced {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-enhanced::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: 0.5s;
+}
+
+.btn-enhanced:hover::before {
+  left: 100%;
+}
+
+.btn-enhanced:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Card Enhancements */
+.card-enhanced {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-enhanced::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transition: 0.5s;
+}
+
+.card-enhanced:hover::before {
+  left: 100%;
+}
+
+.card-enhanced:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
-/* Styles pour le fond de page */
-.page-background {
-  background-attachment: fixed;
-  background-size: cover;
-  background-position: center;
-  min-height: 100vh;
+/* Stat Card Enhancements */
+.stat-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Styles pour la zone de recherche */
-.search-form {
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.1), rgba(255,255,255,0.3), rgba(255,255,255,0.1));
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.stat-card:hover::before {
+  opacity: 1;
+}
+
+.stat-card:hover {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.stat-card .stat-icon-container {
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover .stat-icon-container {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.stat-card .text-4xl {
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover .text-4xl {
+  transform: scale(1.1);
+  text-shadow: 0 4px 8px rgba(0,0,0,0.4);
+}
+
+/* Input Field Enhancements */
+.input-enhanced {
+  transition: all 0.3s ease;
   position: relative;
 }
 
-.search-input {
-  width: 100%;
-  padding: 0.5rem 1rem 0.5rem 2.5rem;
-  border-radius: 9999px;
-  border: 1px solid #d1d5db;
+.input-enhanced:focus {
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+  border-color: #2563eb;
+}
+
+/* Badge Enhancements */
+.badge-enhanced {
   transition: all 0.3s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.search-input:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+.badge-enhanced:hover {
+  transform: scale(1.1);
 }
 
-.search-icon {
+/* Alert Enhancements */
+.alert-enhanced {
+  position: relative;
+  overflow: hidden;
+}
+
+.alert-enhanced::before {
+  content: '';
   position: absolute;
-  left: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #9ca3af;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+  background: linear-gradient(to bottom, #2563eb, #1e40af);
 }
 
-.search-button {
+/* Footer Enhancements */
+.footer-enhanced {
+  position: relative;
+  overflow: hidden;
+}
+
+.footer-enhanced::before {
+  content: '';
   position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #9ca3af;
-  transition: color 0.3s ease;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, #2563eb, #1e40af, #f59e0b, #ea580c);
 }
 
-.search-button:hover {
-  color: #3b82f6;
+/* Navigation Link Enhancements */
+.nav-link-enhanced {
+  position: relative;
+  overflow: hidden;
 }
 
-/* Dégradés de fond pour différentes pages */
-.bg-btp {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%), url('/images/btp-bg.jpg');
-  background-size: cover;
+.nav-link-enhanced::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #f59e0b;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s ease;
 }
 
-.bg-maintenance {
-  background: linear-gradient(135deg, rgba(240, 147, 251, 0.8) 0%, rgba(245, 87, 108, 0.8) 100%), url('/images/maintenance-bg.jpg');
-  background-size: cover;
+.nav-link-enhanced:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
 }
 
-.bg-informatique {
-  background: linear-gradient(135deg, rgba(79, 172, 254, 0.8) 0%, rgba(0, 242, 254, 0.8) 100%), url('/images/informatique-bg.jpg');
-  background-size: cover;
+/* Divider Enhancements */
+.divider-enhanced {
+  position: relative;
+  display: flex;
+  align-items: center;
+  text-align: center;
 }
 
-.bg-camera {
-  background: linear-gradient(135deg, rgba(67, 233, 123, 0.8) 0%, rgba(56, 249, 215, 0.8) 100%), url('/images/camera-bg.jpg');
-  background-size: cover;
+.divider-enhanced::before,
+.divider-enhanced::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #e2e8f0;
 }
 
-.bg-logiciel {
-  background: linear-gradient(135deg, rgba(250, 112, 154, 0.8) 0%, rgba(254, 225, 64, 0.8) 100%), url('/images/logiciel-bg.jpg');
-  background-size: cover;
+.divider-enhanced::before {
+  margin-right: 1rem;
 }
 
-.bg-application {
-  background: linear-gradient(135deg, rgba(168, 237, 234, 0.8) 0%, rgba(254, 214, 227, 0.8) 100%), url('/images/application-bg.jpg');
-  background-size: cover;
+.divider-enhanced::after {
+  margin-left: 1rem;
 }
 
-.bg-site-internet {
-  background: linear-gradient(135deg, rgba(255, 154, 158, 0.8) 0%, rgba(254, 207, 239, 0.8) 100%), url('/images/site-internet-bg.jpg');
-  background-size: cover;
+/* Loading Spinner */
+.loading-spinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(37, 99, 235, 0.3);
+  border-radius: 50%;
+  border-top-color: #2563eb;
+  animation: spin 1s linear infinite;
 }
 
-.bg-piratage {
-  background: linear-gradient(135deg, rgba(161, 140, 209, 0.8) 0%, rgba(251, 194, 235, 0.8) 100%), url('/images/piratage-bg.jpg');
-  background-size: cover;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-.bg-hacking {
-  background: linear-gradient(135deg, rgba(255, 236, 210, 0.8) 0%, rgba(252, 182, 159, 0.8) 100%), url('/images/hacking-bg.jpg');
-  background-size: cover;
+/* Progress Bar */
+.progress-bar-enhanced {
+  height: 10px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #2563eb, #1e40af);
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-bar-enhanced::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: progress 2s ease-in-out infinite;
+}
+
+@keyframes progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }

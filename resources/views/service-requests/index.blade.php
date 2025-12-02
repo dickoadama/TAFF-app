@@ -3,92 +3,105 @@
 @section('content')
 <div class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Demandes de service</h1>
+        <h1 class="text-3xl font-bold text-gray-800">Mes demandes de service</h1>
         <a href="{{ route('service-requests.create') }}" class="btn-primary">
-            <i class="fas fa-plus mr-2"></i>Créer une demande
+            <i class="fas fa-plus mr-2"></i>Nouvelle demande
         </a>
     </div>
-
-    <div class="card">
-        <div class="card-body">
-            @if($serviceRequests->count() > 0)
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Titre</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catégorie</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateur</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date préférée</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach($serviceRequests as $request)
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">{{ $request->title }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">{{ $request->serviceCategory->name ?? 'N/A' }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">{{ $request->user->name ?? 'N/A' }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                        @if($request->status == 'pending') bg-yellow-100 text-yellow-800
-                                        @elseif($request->status == 'accepted') bg-blue-100 text-blue-800
-                                        @elseif($request->status == 'in_progress') bg-indigo-100 text-indigo-800
-                                        @elseif($request->status == 'completed') bg-green-100 text-green-800
-                                        @else bg-red-100 text-red-800
-                                        @endif">
-                                        {{ ucfirst($request->status) }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    @if($request->preferred_date)
-                                        {{ $request->preferred_date->format('d/m/Y H:i') }}
-                                    @else
-                                        <span class="text-gray-500">N/A</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <a href="{{ route('service-requests.show', $request) }}" class="text-primary hover:text-secondary mr-3">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('service-requests.edit', $request) }}" class="text-accent hover:text-amber-600 mr-3">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form action="{{ route('service-requests.destroy', $request) }}" method="POST" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-danger hover:text-red-600" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette demande de service ?')">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+    
+    <p class="text-gray-600 mb-8">
+        Consultez ici toutes vos demandes de service envoyées aux artisans.
+    </p>
+    
+    @if($serviceRequests->count() > 0)
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @foreach($serviceRequests as $request)
+        <div class="card animate__animated animate__fadeInUp animate__delay-{{ ($loop->index % 3) * 200 }}ms">
+            <div class="card-header">
+                <h2 class="font-bold text-lg truncate">{{ $request->title }}</h2>
+            </div>
+            <div class="card-body">
+                <div class="space-y-3">
+                    <div class="flex items-center">
+                        <i class="fas fa-user text-blue-500 mr-2"></i>
+                        <span class="font-medium">{{ $request->artisan->name }}</span>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <i class="fas fa-folder text-green-500 mr-2"></i>
+                        <span>{{ $request->serviceCategory->name }}</span>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <i class="fas fa-calendar text-purple-500 mr-2"></i>
+                        <span>
+                            @if($request->preferred_date)
+                                {{ \Carbon\Carbon::parse($request->preferred_date)->format('d/m/Y') }}
+                            @else
+                                Non spécifiée
+                            @endif
+                        </span>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <i class="fas fa-coins text-yellow-500 mr-2"></i>
+                        <span>
+                            @if($request->budget)
+                                {{ number_format($request->budget, 0, ',', ' ') }} FCFA
+                            @else
+                                Non spécifié
+                            @endif
+                        </span>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <i class="fas fa-info-circle text-indigo-500 mr-2"></i>
+                        <span class="badge 
+                            @if($request->status == 'pending') badge-warning
+                            @elseif($request->status == 'accepted') badge-success
+                            @elseif($request->status == 'rejected') badge-danger
+                            @else badge-secondary
+                            @endif">
+                            {{ ucfirst($request->status) }}
+                        </span>
+                    </div>
                 </div>
                 
-                <div class="mt-6">
-                    {{ $serviceRequests->links() }}
+                <div class="mt-4 pt-4 border-t border-gray-100">
+                    <p class="text-gray-600 text-sm line-clamp-2">
+                        {{ Str::limit($request->description, 100) }}
+                    </p>
                 </div>
-            @else
-                <div class="text-center py-8">
-                    <i class="fas fa-clipboard-list text-4xl text-gray-300 mb-4"></i>
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">Aucune demande de service trouvée</h3>
-                    <p class="text-gray-500 mb-4">Commencez par créer une nouvelle demande de service.</p>
-                    <a href="{{ route('service-requests.create') }}" class="btn-primary">
-                        <i class="fas fa-plus mr-2"></i>Créer une demande
+                
+                <div class="mt-4 flex justify-between items-center">
+                    <span class="text-xs text-gray-500">
+                        {{ $request->created_at->format('d/m/Y H:i') }}
+                    </span>
+                    <a href="{{ route('service-requests.show', $request) }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                        Voir détails
                     </a>
                 </div>
-            @endif
+            </div>
         </div>
+        @endforeach
     </div>
+    
+    <div class="mt-8">
+        {{ $serviceRequests->links() }}
+    </div>
+    @else
+    <div class="card text-center py-12">
+        <div class="text-gray-400 mb-4">
+            <i class="fas fa-inbox text-5xl"></i>
+        </div>
+        <h3 class="text-xl font-medium text-gray-700 mb-2">Aucune demande de service</h3>
+        <p class="text-gray-500 mb-6">
+            Vous n'avez pas encore envoyé de demande de service aux artisans.
+        </p>
+        <a href="{{ route('service-requests.create') }}" class="btn-primary inline-block">
+            <i class="fas fa-paper-plane mr-2"></i>Envoyer une demande
+        </a>
+    </div>
+    @endif
 </div>
 @endsection

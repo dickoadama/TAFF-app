@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Invoice;
+use App\Models\InvoiceItem;
 use App\Models\Quote;
+use App\Models\Product;
+use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
 {
@@ -15,7 +17,7 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        $invoices = Invoice::with(['quote', 'user', 'artisan'])->latest()->paginate(10);
+        $invoices = Invoice::with(['user', 'artisan'])->latest()->paginate(10);
         return view('invoices.index', compact('invoices'));
     }
 
@@ -26,8 +28,9 @@ class InvoiceController extends Controller
      */
     public function create()
     {
-        $quotes = Quote::whereDoesntHave('invoice')->get();
-        return view('invoices.create', compact('quotes'));
+        $quotes = Quote::with(['serviceRequest', 'artisan'])->get();
+        $products = Product::all();
+        return view('invoices.create', compact('quotes', 'products'));
     }
 
     /**
@@ -39,102 +42,191 @@ class InvoiceController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'quote_id' => 'required|exists:quotes,id',
-            'invoice_number' => 'required|unique:invoices',
+            'quote_id' => 'nullable|exists:quotes,id',
+            'operation_type' => 'required|in:purchase,credit,refund',
+            'credit_status' => 'nullable|required_if:operation_type,credit|in:issued,paid',
+            'refund_status' => 'nullable|required_if:operation_type,refund|in:credit,withdrawal',
+            'client_full_name' => 'required|string|max:255',
+            'client_contact' => 'required|string|max:255',
             'issued_date' => 'required|date',
             'due_date' => 'required|date|after:issued_date',
-            'notes' => 'nullable|string',
+            'items' => 'required|array|min:1',
+            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.quantity' => 'required|integer|min:1',
+            'items.*.unit_price' => 'required|numeric|min:0',
+            'items.*.tax_rate' => 'required|numeric|min:0|max:100',
+            'items.*.discount_rate' => 'nullable|numeric|min:0|max:100',
         ]);
 
-        $quote = Quote::findOrFail($request->quote_id);
+        $quote = null;
+        $user_id = null;
+        $artisan_id = null;
+        
+        if ($request->quote_id) {
+            $quote = Quote::findOrFail($request->quote_id);
+            $user_id = $quote->serviceRequest->user_id;
+            $artisan_id = $quote->artisan_id;
+        }
+        
+        // Générer automatiquement le numéro de facture
+        $invoiceNumber = $this->generateInvoiceNumber($request->client_full_name, $request->client_contact, $request->issued_date);
         
         $invoice = Invoice::create([
-            'quote_id' => $quote->id,
-            'user_id' => $quote->serviceRequest->user_id,
-            'artisan_id' => $quote->artisan_id,
-            'invoice_number' => $request->invoice_number,
-            'amount' => $quote->amount,
+            'quote_id' => $request->quote_id,
+            'user_id' => $user_id,
+            'artisan_id' => $artisan_id,
+            'operation_type' => $request->operation_type,
+            'credit_status' => $request->operation_type === 'credit' ? $request->credit_status : null,
+            'refund_status' => $request->operation_type === 'refund' ? $request->refund_status : null,
+            'client_full_name' => $request->client_full_name,
+            'client_contact' => $request->client_contact,
+            'invoice_number' => $invoiceNumber,
             'issued_date' => $request->issued_date,
             'due_date' => $request->due_date,
-            'notes' => $request->notes,
             'status' => 'pending',
         ]);
 
-        return redirect()->route('invoices.index')->with('success', 'Facture créée avec succès.');
+        // Créer les lignes de facture
+        foreach ($request->items as $itemData) {
+            InvoiceItem::create([
+                'invoice_id' => $invoice->id,
+                'product_id' => $itemData['product_id'],
+                'quantity' => $itemData['quantity'],
+                'unit_price' => $itemData['unit_price'],
+                'tax_rate' => $itemData['tax_rate'],
+                'discount_rate' => $itemData['discount_rate'] ?? 0,
+            ]);
+        }
+
+        return redirect()->route('invoices.show', $invoice)->with('success', 'Facture créée avec succès.');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\Invoice  $invoice
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Invoice $invoice)
     {
-        $invoice = Invoice::with(['quote', 'user', 'artisan'])->findOrFail($id);
+        $invoice->load('items.product');
         return view('invoices.show', compact('invoice'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\Invoice  $invoice
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Invoice $invoice)
     {
-        $invoice = Invoice::findOrFail($id);
-        $quotes = Quote::all();
-        return view('invoices.edit', compact('invoice', 'quotes'));
+        $quotes = Quote::with(['serviceRequest', 'artisan'])->get();
+        $products = Product::all();
+        $invoice->load('items.product');
+        return view('invoices.edit', compact('invoice', 'quotes', 'products'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Models\Invoice  $invoice
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
         $request->validate([
-            'quote_id' => 'required|exists:quotes,id',
+            'quote_id' => 'nullable|exists:quotes,id',
+            'operation_type' => 'required|in:purchase,credit,refund',
+            'credit_status' => 'nullable|required_if:operation_type,credit|in:issued,paid',
+            'refund_status' => 'nullable|required_if:operation_type,refund|in:credit,withdrawal',
+            'client_full_name' => 'required|string|max:255',
+            'client_contact' => 'required|string|max:255',
             'invoice_number' => 'required|unique:invoices,invoice_number,'.$id,
             'issued_date' => 'required|date',
             'due_date' => 'required|date|after:issued_date',
             'status' => 'required|in:pending,paid,overdue,cancelled',
-            'notes' => 'nullable|string',
         ]);
 
         $invoice = Invoice::findOrFail($id);
-        $quote = Quote::findOrFail($request->quote_id);
+        
+        $quote = null;
+        $user_id = null;
+        $artisan_id = null;
+        
+        if ($request->quote_id) {
+            $quote = Quote::findOrFail($request->quote_id);
+            $user_id = $quote->serviceRequest->user_id;
+            $artisan_id = $quote->artisan_id;
+        }
         
         $invoice->update([
-            'quote_id' => $quote->id,
-            'user_id' => $quote->serviceRequest->user_id,
-            'artisan_id' => $quote->artisan_id,
+            'quote_id' => $request->quote_id,
+            'user_id' => $user_id,
+            'artisan_id' => $artisan_id,
+            'operation_type' => $request->operation_type,
+            'credit_status' => $request->operation_type === 'credit' ? $request->credit_status : null,
+            'refund_status' => $request->operation_type === 'refund' ? $request->refund_status : null,
+            'client_full_name' => $request->client_full_name,
+            'client_contact' => $request->client_contact,
             'invoice_number' => $request->invoice_number,
-            'amount' => $quote->amount,
             'issued_date' => $request->issued_date,
             'due_date' => $request->due_date,
             'status' => $request->status,
-            'notes' => $request->notes,
         ]);
 
-        return redirect()->route('invoices.index')->with('success', 'Facture mise à jour avec succès.');
+        return redirect()->route('invoices.show', $invoice)->with('success', 'Facture mise à jour avec succès.');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\Models\Invoice  $invoice
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Invoice $invoice)
     {
-        $invoice = Invoice::findOrFail($id);
         $invoice->delete();
-        
         return redirect()->route('invoices.index')->with('success', 'Facture supprimée avec succès.');
+    }
+    
+    /**
+     * Générer un numéro de facture automatique basé sur le nom, le contact et la date
+     *
+     * @param string $fullName
+     * @param string $contact
+     * @param string $date
+     * @return string
+     */
+    private function generateInvoiceNumber($fullName, $contact, $date)
+    {
+        // Formater la date (YYYYMMDD)
+        $formattedDate = date('Ymd', strtotime($date));
+        
+        // Extraire les premières lettres du nom complet
+        $nameInitials = '';
+        $nameParts = explode(' ', $fullName);
+        foreach ($nameParts as $part) {
+            $nameInitials .= strtoupper(substr($part, 0, 1));
+        }
+        
+        // Extraire les chiffres du contact (numéro de téléphone ou email)
+        $contactNumbers = preg_replace('/[^0-9]/', '', $contact);
+        $contactCode = substr($contactNumbers, -4); // Prendre les 4 derniers chiffres
+        
+        // Combiner tous les éléments
+        $baseNumber = $formattedDate . '-' . $nameInitials . '-' . $contactCode;
+        
+        // Vérifier s'il existe déjà une facture avec ce numéro et ajouter un suffixe si nécessaire
+        $invoiceNumber = $baseNumber;
+        $counter = 1;
+        
+        while (Invoice::where('invoice_number', $invoiceNumber)->exists()) {
+            $invoiceNumber = $baseNumber . '-' . $counter;
+            $counter++;
+        }
+        
+        return $invoiceNumber;
     }
 }

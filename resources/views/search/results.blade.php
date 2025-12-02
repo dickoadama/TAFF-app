@@ -1,159 +1,153 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Résultats de recherche pour "{{ $query }}"</h1>
-        <p class="text-gray-600">Trouvé {{ $artisans->total() + $categories->total() + $serviceRequests->total() }} résultats</p>
-    </div>
-
-    <!-- Résultats pour les artisans -->
-    @if($artisans->count() > 0)
-    <div class="card mb-8">
-        <div class="card-header">
-            <h2 class="text-xl font-semibold">Artisans ({{ $artisans->total() }})</h2>
-        </div>
-        <div class="card-body">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach($artisans as $artisan)
-                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                    <div class="flex items-center mb-3">
-                        <div class="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16 flex items-center justify-center mr-4">
-                            <i class="fas fa-user text-gray-500"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-lg">{{ $artisan->name }}</h3>
-                            <p class="text-sm text-gray-500">{{ $artisan->serviceCategory->name ?? 'Catégorie non définie' }}</p>
-                        </div>
+<div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+        <h1 class="text-3xl font-bold text-gray-900 mb-6">Résultats de recherche pour "{{ $query }}"</h1>
+        
+        @if(empty($query))
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
                     </div>
-                    <p class="text-gray-600 text-sm mb-3 line-clamp-2">{{ Str::limit($artisan->description, 100) }}</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-yellow-500">
-                            @for($i = 1; $i <= 5; $i++)
-                                @if($i <= $artisan->rating)
-                                    <i class="fas fa-star"></i>
-                                @else
-                                    <i class="far fa-star"></i>
-                                @endif
-                            @endfor
-                        </span>
-                        <a href="{{ route('artisans.show', $artisan) }}" class="text-primary hover:underline text-sm">Voir détails</a>
+                    <div class="ml-3">
+                        <p class="text-sm text-yellow-700">
+                            Veuillez entrer un terme de recherche pour trouver des artisans, catégories ou demandes de service.
+                        </p>
                     </div>
                 </div>
-                @endforeach
             </div>
-            
-            @if($artisans->hasPages())
-            <div class="mt-6">
-                {{ $artisans->appends(['q' => $query])->links() }}
-            </div>
-            @endif
-        </div>
-    </div>
-    @endif
-
-    <!-- Résultats pour les catégories -->
-    @if($categories->count() > 0)
-    <div class="card mb-8">
-        <div class="card-header">
-            <h2 class="text-xl font-semibold">Catégories de service ({{ $categories->total() }})</h2>
-        </div>
-        <div class="card-body">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach($categories as $category)
-                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                    <div class="flex items-center mb-3">
-                        <div class="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16 flex items-center justify-center mr-4">
-                            <i class="fas fa-folder text-gray-500"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-lg">{{ $category->name }}</h3>
-                        </div>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-3 line-clamp-2">{{ Str::limit($category->description, 100) }}</p>
-                    <div class="flex justify-end">
-                        <a href="{{ route('service-categories.show', $category) }}" class="text-primary hover:underline text-sm">Voir détails</a>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-            
-            @if($categories->hasPages())
-            <div class="mt-6">
-                {{ $categories->appends(['q' => $query])->links() }}
-            </div>
-            @endif
-        </div>
-    </div>
-    @endif
-
-    <!-- Résultats pour les demandes de service -->
-    @if($serviceRequests->count() > 0)
-    <div class="card">
-        <div class="card-header">
-            <h2 class="text-xl font-semibold">Demandes de service ({{ $serviceRequests->total() }})</h2>
-        </div>
-        <div class="card-body">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Titre</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catégorie</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($serviceRequests as $request)
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">{{ $request->title }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{{ $request->serviceCategory->name ?? 'N/A' }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    @if($request->status == 'pending') bg-yellow-100 text-yellow-800
-                                    @elseif($request->status == 'accepted') bg-blue-100 text-blue-800
-                                    @elseif($request->status == 'in_progress') bg-indigo-100 text-indigo-800
-                                    @elseif($request->status == 'completed') bg-green-100 text-green-800
-                                    @else bg-red-100 text-red-800
-                                    @endif">
-                                    {{ ucfirst($request->status) }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <a href="{{ route('service-requests.show', $request) }}" class="text-primary hover:text-secondary">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                            </td>
-                        </tr>
+        @else
+            <!-- Résultats pour les artisans -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Artisans ({{ $artisans->count() }})</h2>
+                
+                @if($artisans->count() > 0)
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach($artisans as $artisan)
+                            <div class="bg-white overflow-hidden shadow rounded-lg">
+                                <div class="p-6">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0">
+                                            <div class="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center">
+                                                <span class="text-indigo-800 font-bold">{{ substr($artisan->name, 0, 1) }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="ml-4">
+                                            <h3 class="text-lg font-medium text-gray-900">{{ $artisan->name }}</h3>
+                                            <p class="text-sm text-gray-500">{{ $artisan->skills ?? 'Compétences non spécifiées' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4">
+                                        <p class="text-sm text-gray-600">{{ Str::limit($artisan->description, 100) }}</p>
+                                    </div>
+                                    <div class="mt-4">
+                                        <a href="{{ route('artisans.show', $artisan) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">
+                                            Voir le profil
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         @endforeach
-                    </tbody>
-                </table>
+                    </div>
+                @else
+                    <div class="bg-gray-50 rounded-lg p-6 text-center">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun artisan trouvé</h3>
+                        <p class="mt-1 text-sm text-gray-500">Aucun artisan ne correspond à votre recherche "{{ $query }}".</p>
+                    </div>
+                @endif
             </div>
             
-            @if($serviceRequests->hasPages())
-            <div class="mt-6">
-                {{ $serviceRequests->appends(['q' => $query])->links() }}
+            <!-- Résultats pour les catégories -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Catégories ({{ $categories->count() }})</h2>
+                
+                @if($categories->count() > 0)
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach($categories as $category)
+                            <div class="bg-white overflow-hidden shadow rounded-lg">
+                                <div class="p-6">
+                                    <h3 class="text-lg font-medium text-gray-900">{{ $category->name }}</h3>
+                                    <div class="mt-2">
+                                        <p class="text-sm text-gray-600">{{ Str::limit($category->description, 100) }}</p>
+                                    </div>
+                                    <div class="mt-4">
+                                        <a href="{{ route('service-categories.show', $category) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">
+                                            Voir les détails
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="bg-gray-50 rounded-lg p-6 text-center">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h3 class="mt-2 text-sm font-medium text-gray-900">Aucune catégorie trouvée</h3>
+                        <p class="mt-1 text-sm text-gray-500">Aucune catégorie ne correspond à votre recherche "{{ $query }}".</p>
+                    </div>
+                @endif
             </div>
-            @endif
-        </div>
+            
+            <!-- Résultats pour les demandes de service -->
+            <div>
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Demandes de service ({{ $requests->count() }})</h2>
+                
+                @if($requests->count() > 0)
+                    <div class="bg-white shadow overflow-hidden sm:rounded-md">
+                        <ul class="divide-y divide-gray-200">
+                            @foreach($requests as $request)
+                                <li>
+                                    <a href="{{ route('service-requests.show', $request) }}" class="block hover:bg-gray-50">
+                                        <div class="px-4 py-4 sm:px-6">
+                                            <div class="flex items-center justify-between">
+                                                <p class="text-sm font-medium text-indigo-600 truncate">{{ $request->title }}</p>
+                                                <div class="ml-2 flex-shrink-0 flex">
+                                                    <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                        {{ $request->status ?? 'En attente' }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 sm:flex sm:justify-between">
+                                                <div class="sm:flex">
+                                                    <p class="flex items-center text-sm text-gray-500">
+                                                        {{ Str::limit($request->description, 100) }}
+                                                    </p>
+                                                </div>
+                                                <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                                                    <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                                                    </svg>
+                                                    <p>
+                                                        Posté le {{ $request->created_at->format('d/m/Y') }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @else
+                    <div class="bg-gray-50 rounded-lg p-6 text-center">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h3 class="mt-2 text-sm font-medium text-gray-900">Aucune demande de service trouvée</h3>
+                        <p class="mt-1 text-sm text-gray-500">Aucune demande de service ne correspond à votre recherche "{{ $query }}".</p>
+                    </div>
+                @endif
+            </div>
+        @endif
     </div>
-    @endif
-
-    <!-- Aucun résultat -->
-    @if($artisans->count() == 0 && $categories->count() == 0 && $serviceRequests->count() == 0)
-    <div class="text-center py-12">
-        <i class="fas fa-search text-4xl text-gray-300 mb-4"></i>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun résultat trouvé</h3>
-        <p class="text-gray-500 mb-4">Votre recherche pour "{{ $query }}" n'a donné aucun résultat.</p>
-        <a href="{{ route('home') }}" class="btn-primary">
-            <i class="fas fa-arrow-left mr-2"></i>Retour à l'accueil
-        </a>
-    </div>
-    @endif
 </div>
 @endsection

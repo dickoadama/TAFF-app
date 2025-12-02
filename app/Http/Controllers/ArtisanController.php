@@ -20,6 +20,22 @@ class ArtisanController extends Controller
     }
 
     /**
+     * Display a listing of featured artisans.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function featured()
+    {
+        $featuredArtisans = Artisan::where('available', true)
+            ->with('serviceCategory')
+            ->orderBy('rating', 'desc')
+            ->limit(10)
+            ->get();
+            
+        return view('artisans.featured', compact('featuredArtisans'));
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -61,7 +77,7 @@ class ArtisanController extends Controller
      */
     public function show(Artisan $artisan)
     {
-        $artisan->load('serviceCategory');
+        $artisan->load(['serviceCategory', 'works']);
         return view('artisans.show', compact('artisan'));
     }
 
