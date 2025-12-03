@@ -151,6 +151,44 @@
       opacity: .5;
     }
   }
+  
+  /* Enhanced animations for calendar and clock widgets */
+  .widget-enter {
+    animation: widgetEnter 0.3s ease-out forwards;
+  }
+  
+  @keyframes widgetEnter {
+    0% {
+      opacity: 0;
+      transform: scale(0.9) translateY(-10px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+  
+  .widget-exit {
+    animation: widgetExit 0.2s ease-in forwards;
+  }
+  
+  @keyframes widgetExit {
+    0% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0.9) translateY(-10px);
+    }
+  }
+}
+
+/* Responsive breakpoints */
+@media (min-width: 475px) {
+  .xs\:text-xs {
+    font-size: 0.75rem;
+  }
 }
 
 body {

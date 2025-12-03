@@ -45,6 +45,55 @@
                 transform: translateY(-5px);
             }
         }
+        
+        /* Calendar and Clock Widgets */
+        .widget-container {
+            position: fixed;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .calendar-container {
+            top: 80px;
+            right: 20px;
+        }
+        
+        .clock-container {
+            top: 20px;
+            left: 20px;
+        }
+        
+        .widget-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .widget-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+        
+        .widget-content {
+            display: none;
+            margin-top: 10px;
+        }
+        
+        .widget-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-20 items-center">
@@ -109,6 +158,14 @@
                 
                 <!-- Profil utilisateur -->
                 <div class="relative">
+                    <!-- Notification Bell Icon -->
+                    <div class="relative mr-4">
+                        <button id="notification-bell" class="text-white hover:text-yellow-300 transition-colors duration-300 p-2 rounded-full hover:bg-white hover:bg-opacity-20">
+                            <i class="fas fa-bell text-xl"></i>
+                            <span id="notification-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                        </button>
+                    </div>
+                    
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
                             <button class="flex items-center text-sm font-bold text-yellow-300 hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-full transition duration-300 transform hover:scale-105 shadow-lg hover:shadow-yellow-400/30">
@@ -184,4 +241,132 @@
         </div>
         @endauth
     </div>
+    
+    <!-- Calendar Widget Toggle -->
+    <div class="widget-container calendar-container">
+        <div class="widget-toggle" id="calendar-toggle">
+            <i class="fas fa-calendar-alt"></i>
+        </div>
+        <div class="widget-content" id="calendar-content">
+            @include('components.calendar-widget')
+        </div>
+    </div>
+    
+    <!-- Clock Widget Toggle -->
+    <div class="widget-container clock-container">
+        <div class="widget-toggle" id="clock-toggle">
+            <i class="fas fa-clock"></i>
+        </div>
+        <div class="widget-content" id="clock-content">
+            @include('components.clock-widget')
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const calendarToggle = document.getElementById('calendar-toggle');
+            const calendarContent = document.getElementById('calendar-content');
+            const clockToggle = document.getElementById('clock-toggle');
+            const clockContent = document.getElementById('clock-content');
+            const notificationBell = document.getElementById('notification-bell');
+            
+            // Fetch unread notifications count
+            function fetchUnreadNotifications() {
+                fetch('/notifications/unread')
+                    .then(response => response.json())
+                    .then(notifications => {
+                        const countElement = document.getElementById('notification-count');
+                        const count = notifications.length;
+                        
+                        if (count > 0) {
+                            countElement.textContent = count > 9 ? '9+' : count;
+                            countElement.classList.remove('hidden');
+                        } else {
+                            countElement.classList.add('hidden');
+                        }
+                    })
+                    .catch(error => console.error('Error fetching notifications:', error));
+            }
+            
+            // Fetch notifications on page load
+            fetchUnreadNotifications();
+            
+            // Refresh notifications every 30 seconds
+            setInterval(fetchUnreadNotifications, 30000);
+            
+            // Toggle calendar visibility
+            calendarToggle.addEventListener('click', function() {
+                if (calendarContent.classList.contains('active')) {
+                    // Hide calendar with exit animation
+                    calendarContent.classList.remove('widget-enter');
+                    calendarContent.classList.add('widget-exit');
+                    setTimeout(() => {
+                        calendarContent.classList.remove('active', 'widget-exit');
+                    }, 200);
+                } else {
+                    // Show calendar with enter animation
+                    calendarContent.classList.add('active', 'widget-enter');
+                    // Close clock if open
+                    if (clockContent.classList.contains('active')) {
+                        clockContent.classList.remove('active', 'widget-enter');
+                        clockContent.classList.add('widget-exit');
+                        setTimeout(() => {
+                            clockContent.classList.remove('widget-exit');
+                        }, 200);
+                    }
+                }
+            });
+            
+            // Toggle clock visibility
+            clockToggle.addEventListener('click', function() {
+                if (clockContent.classList.contains('active')) {
+                    // Hide clock with exit animation
+                    clockContent.classList.remove('widget-enter');
+                    clockContent.classList.add('widget-exit');
+                    setTimeout(() => {
+                        clockContent.classList.remove('active', 'widget-exit');
+                    }, 200);
+                } else {
+                    // Show clock with enter animation
+                    clockContent.classList.add('active', 'widget-enter');
+                    // Close calendar if open
+                    if (calendarContent.classList.contains('active')) {
+                        calendarContent.classList.remove('active', 'widget-enter');
+                        calendarContent.classList.add('widget-exit');
+                        setTimeout(() => {
+                            calendarContent.classList.remove('widget-exit');
+                        }, 200);
+                    }
+                }
+            });
+            
+            // Toggle notifications dropdown
+            notificationBell.addEventListener('click', function() {
+                window.location.href = '/notifications';
+            });
+            
+            // Close widgets when clicking elsewhere
+            document.addEventListener('click', function(event) {
+                if (!calendarToggle.contains(event.target) && !calendarContent.contains(event.target)) {
+                    if (calendarContent.classList.contains('active')) {
+                        calendarContent.classList.remove('widget-enter');
+                        calendarContent.classList.add('widget-exit');
+                        setTimeout(() => {
+                            calendarContent.classList.remove('active', 'widget-exit');
+                        }, 200);
+                    }
+                }
+                
+                if (!clockToggle.contains(event.target) && !clockContent.contains(event.target)) {
+                    if (clockContent.classList.contains('active')) {
+                        clockContent.classList.remove('widget-enter');
+                        clockContent.classList.add('widget-exit');
+                        setTimeout(() => {
+                            clockContent.classList.remove('active', 'widget-exit');
+                        }, 200);
+                    }
+                }
+            });
+        });
+    </script>
 </nav>

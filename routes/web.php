@@ -19,6 +19,8 @@ use App\Http\Controllers\ContactsController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ServiceRequestController;
 use App\Http\Controllers\ArtisanWorkController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\MessagingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -117,6 +119,20 @@ Route::middleware(['auth'])->group(function () {
     
     // Chat
     Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
+    
+    // Notifications
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/unread', [NotificationController::class, 'unread']);
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
+    
+    // Messagerie
+    Route::get('/messaging', [MessagingController::class, 'index'])->name('messaging.index');
+    Route::post('/messaging', [MessagingController::class, 'create'])->name('messaging.create');
+    Route::get('/messaging/{conversation}', [MessagingController::class, 'show'])->name('messaging.show');
+    Route::post('/messaging/{conversation}', [MessagingController::class, 'store'])->name('messaging.store');
+    Route::get('/messaging/unread-count', [MessagingController::class, 'unreadCount']);
 });
 
 // Routes d'authentification
