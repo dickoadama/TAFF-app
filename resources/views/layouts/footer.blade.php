@@ -14,19 +14,19 @@
                     pour tous types de travaux. Nous facilitons la recherche, la sélection et la gestion de vos projets.
                 </p>
                 <div class="footer-social">
-                    <a href="#" class="footer-social-link">
+                    <a href="#" class="footer-social-link text-blue-600 hover:text-blue-800">
                         <i class="fab fa-facebook-f"></i>
                     </a>
-                    <a href="#" class="footer-social-link">
+                    <a href="#" class="footer-social-link text-blue-400 hover:text-blue-600">
                         <i class="fab fa-twitter"></i>
                     </a>
-                    <a href="#" class="footer-social-link">
+                    <a href="#" class="footer-social-link text-pink-500 hover:text-pink-700">
                         <i class="fab fa-instagram"></i>
                     </a>
-                    <a href="#" class="footer-social-link">
+                    <a href="#" class="footer-social-link text-blue-800 hover:text-blue-900">
                         <i class="fab fa-linkedin-in"></i>
                     </a>
-                    <a href="#" class="footer-social-link">
+                    <a href="#" class="footer-social-link text-red-600 hover:text-red-800">
                         <i class="fab fa-youtube"></i>
                     </a>
                 </div>
@@ -146,9 +146,9 @@
                     <a href="https://github.com/dickoadama" target="_blank">dickoadama</a>
                 </div>
                 <div class="footer-links-bottom">
-                    <a href="#">Conditions d'utilisation</a>
-                    <a href="#">Politique de confidentialité</a>
-                    <a href="#">Mentions légales</a>
+                    <a href="{{ route('legal.terms') }}">Conditions d'utilisation</a>
+                    <a href="{{ route('legal.privacy') }}">Politique de confidentialité</a>
+                    <a href="{{ route('legal.mentions') }}">Mentions légales</a>
                     <a href="{{ route('contacts.index') }}">Contact</a>
                 </div>
             </div>

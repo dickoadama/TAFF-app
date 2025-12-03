@@ -11,6 +11,13 @@
                 Découvrez nos réalisations et projets accomplis avec succès.
             </p>
             
+            <!-- Bouton pour accéder à la galerie vidéo -->
+            <div class="mb-8 text-center">
+                <a href="{{ route('works.gallery') }}" class="inline-block bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 px-6 rounded-full hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                    <i class="fas fa-video mr-2"></i>Découvrir notre galerie vidéo
+                </a>
+            </div>
+            
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Exemple d'œuvre 1 -->
                 <div class="card">

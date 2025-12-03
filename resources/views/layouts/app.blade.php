@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
     <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/embellishment.css', 'resources/css/video-section.css', 'resources/css/typography.css', 'resources/css/forms.css', 'resources/css/tables.css', 'resources/css/footer.css'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/embellishment.css', 'resources/css/print-invoice.css', 'resources/css/print-quote.css', 'resources/css/video-section.css', 'resources/css/typography.css', 'resources/css/forms.css', 'resources/css/tables.css', 'resources/css/footer.css'])
     
     <!-- Fallback pour Vite -->
     @if (!app()->environment('local'))

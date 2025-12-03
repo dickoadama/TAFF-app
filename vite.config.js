@@ -7,6 +7,8 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/css/embellishment.css',
+                'resources/css/print-invoice.css',
+                'resources/css/print-quote.css',
                 'resources/css/responsive.css',
                 'resources/css/placeholders.css',
                 'resources/css/home.css',

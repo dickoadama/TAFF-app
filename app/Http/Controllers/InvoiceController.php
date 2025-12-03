@@ -43,6 +43,7 @@ class InvoiceController extends Controller
     {
         $request->validate([
             'quote_id' => 'nullable|exists:quotes,id',
+            'artisan_id' => 'nullable|exists:artisans,id',
             'operation_type' => 'required|in:purchase,credit,refund',
             'credit_status' => 'nullable|required_if:operation_type,credit|in:issued,paid',
             'refund_status' => 'nullable|required_if:operation_type,refund|in:credit,withdrawal',
@@ -59,7 +60,7 @@ class InvoiceController extends Controller
         ]);
 
         $quote = null;
-        $user_id = null;
+        $user_id = auth()->id(); // Utiliser l'utilisateur connecté par défaut
         $artisan_id = null;
         
         if ($request->quote_id) {
@@ -68,11 +69,41 @@ class InvoiceController extends Controller
             $artisan_id = $quote->artisan_id;
         }
         
+        // Si aucun devis n'est sélectionné mais qu'un artisan est spécifié, on peut l'utiliser
+        if (!$request->quote_id && $request->artisan_id) {
+            $artisan_id = $request->artisan_id;
+        }
+        
         // Générer automatiquement le numéro de facture
         $invoiceNumber = $this->generateInvoiceNumber($request->client_full_name, $request->client_contact, $request->issued_date);
         
+        // Calculer le montant total de la facture
+        $totalAmount = 0;
+        foreach ($request->items as $itemData) {
+            $quantity = $itemData['quantity'];
+            $unitPrice = $itemData['unit_price'];
+            $taxRate = $itemData['tax_rate'];
+            $discountRate = $itemData['discount_rate'] ?? 0;
+            
+            // Calculer le sous-total
+            $subtotal = $quantity * $unitPrice;
+            
+            // Appliquer la remise
+            $discountAmount = $subtotal * ($discountRate / 100);
+            $subtotalAfterDiscount = $subtotal - $discountAmount;
+            
+            // Appliquer la TVA
+            $taxAmount = $subtotalAfterDiscount * ($taxRate / 100);
+            
+            // Calculer le total pour cet article
+            $itemTotal = $subtotalAfterDiscount + $taxAmount;
+            
+            // Ajouter au total général
+            $totalAmount += $itemTotal;
+        }
+        
         $invoice = Invoice::create([
-            'quote_id' => $request->quote_id,
+            'quote_id' => $request->quote_id ?: null, // S'assurer que null est explicitement défini
             'user_id' => $user_id,
             'artisan_id' => $artisan_id,
             'operation_type' => $request->operation_type,
@@ -83,6 +114,7 @@ class InvoiceController extends Controller
             'invoice_number' => $invoiceNumber,
             'issued_date' => $request->issued_date,
             'due_date' => $request->due_date,
+            'amount' => $totalAmount, // Inclure le montant calculé
             'status' => 'pending',
         ]);
 
@@ -138,6 +170,7 @@ class InvoiceController extends Controller
     {
         $request->validate([
             'quote_id' => 'nullable|exists:quotes,id',
+            'artisan_id' => 'nullable|exists:artisans,id',
             'operation_type' => 'required|in:purchase,credit,refund',
             'credit_status' => 'nullable|required_if:operation_type,credit|in:issued,paid',
             'refund_status' => 'nullable|required_if:operation_type,refund|in:credit,withdrawal',
@@ -152,8 +185,8 @@ class InvoiceController extends Controller
         $invoice = Invoice::findOrFail($id);
         
         $quote = null;
-        $user_id = null;
-        $artisan_id = null;
+        $user_id = $invoice->user_id; // Conserver l'utilisateur existant par défaut
+        $artisan_id = $invoice->artisan_id; // Conserver l'artisan existant par défaut
         
         if ($request->quote_id) {
             $quote = Quote::findOrFail($request->quote_id);
@@ -161,8 +194,40 @@ class InvoiceController extends Controller
             $artisan_id = $quote->artisan_id;
         }
         
+        // Si aucun devis n'est sélectionné mais qu'un artisan est spécifié, on peut l'utiliser
+        if (!$request->quote_id && $request->artisan_id) {
+            $artisan_id = $request->artisan_id;
+        }
+        
+        // Calculer le montant total de la facture
+        $totalAmount = 0;
+        if (isset($request->items)) {
+            foreach ($request->items as $itemData) {
+                $quantity = $itemData['quantity'];
+                $unitPrice = $itemData['unit_price'];
+                $taxRate = $itemData['tax_rate'];
+                $discountRate = $itemData['discount_rate'] ?? 0;
+                
+                // Calculer le sous-total
+                $subtotal = $quantity * $unitPrice;
+                
+                // Appliquer la remise
+                $discountAmount = $subtotal * ($discountRate / 100);
+                $subtotalAfterDiscount = $subtotal - $discountAmount;
+                
+                // Appliquer la TVA
+                $taxAmount = $subtotalAfterDiscount * ($taxRate / 100);
+                
+                // Calculer le total pour cet article
+                $itemTotal = $subtotalAfterDiscount + $taxAmount;
+                
+                // Ajouter au total général
+                $totalAmount += $itemTotal;
+            }
+        }
+        
         $invoice->update([
-            'quote_id' => $request->quote_id,
+            'quote_id' => $request->quote_id ?: null, // S'assurer que null est explicitement défini
             'user_id' => $user_id,
             'artisan_id' => $artisan_id,
             'operation_type' => $request->operation_type,
@@ -173,6 +238,7 @@ class InvoiceController extends Controller
             'invoice_number' => $request->invoice_number,
             'issued_date' => $request->issued_date,
             'due_date' => $request->due_date,
+            'amount' => $totalAmount, // Inclure le montant calculé
             'status' => $request->status,
         ]);
 

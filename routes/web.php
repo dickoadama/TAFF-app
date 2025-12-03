@@ -48,6 +48,7 @@ Route::get('/test-video', function () {
 
 // Routes pour les réalisations, partenariats et contacts
 Route::get('/works', [WorksController::class, 'index'])->name('works.index');
+Route::get('/works/gallery', [WorksController::class, 'gallery'])->name('works.gallery');
 Route::get('/partners', [PartnersController::class, 'index'])->name('partners.index');
 Route::get('/contacts', [ContactsController::class, 'index'])->name('contacts.index');
 
@@ -120,3 +121,16 @@ Route::middleware(['auth'])->group(function () {
 
 // Routes d'authentification
 require __DIR__.'/auth.php';
+
+// Routes pour les pages légales
+Route::get('/legal/terms', function () {
+    return view('legal.terms');
+})->name('legal.terms');
+
+Route::get('/legal/privacy', function () {
+    return view('legal.privacy');
+})->name('legal.privacy');
+
+Route::get('/legal/mentions', function () {
+    return view('legal.mentions');
+})->name('legal.mentions');

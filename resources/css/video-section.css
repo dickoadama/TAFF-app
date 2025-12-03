@@ -60,6 +60,7 @@
   padding-top: 56.25%; /* 16:9 Aspect Ratio */
 }
 
+.video-aspect-ratio video,
 .video-aspect-ratio iframe {
   position: absolute;
   top: 0;
@@ -70,6 +71,7 @@
   transition: transform 0.3s ease;
 }
 
+.video-display-container:hover video,
 .video-display-container:hover iframe {
   transform: scale(1.02);
 }
@@ -271,6 +273,64 @@
   margin: 0 auto;
 }
 
+/* Video Gallery Specific Styles */
+.video-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.video-gallery-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.video-gallery-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #1e40af 0%, #7e22ce 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.video-gallery-header p {
+  font-size: 1.25rem;
+  color: #64748b;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Modal Styles */
+#videoModal {
+  z-index: 1000;
+}
+
+#videoModal video {
+  max-height: 80vh;
+}
+
+#closeModal {
+  position: absolute;
+  top: -50px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+#closeModal:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 /* Responsive Adjustments */
 @media (max-width: 767px) {
   .video-feature-section {
@@ -308,6 +368,19 @@
   .video-section-subtitle {
     font-size: 1.125rem;
   }
+  
+  .video-gallery-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .video-gallery-header h1 {
+    font-size: 2rem;
+  }
+  
+  .video-gallery-header p {
+    font-size: 1.125rem;
+  }
 }
 
 /* Animation for entrance */
@@ -322,11 +395,42 @@
   }
 }
 
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .video-feature-section {
   animation: fadeInUp 0.8s ease-out forwards;
   opacity: 0;
 }
 
 .video-feature-section.animate {
+  animation-delay: 0.3s;
+}
+
+.video-gallery-header {
+  animation: fadeInDown 1s ease-out;
+}
+
+.video-card {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.video-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.video-card:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.video-card:nth-child(4) {
   animation-delay: 0.3s;
 }

@@ -91,16 +91,20 @@
             
             <!-- Zone de recherche et profil à droite -->
             <div class="flex items-center space-x-4 ml-auto">
-                <!-- Zone de recherche -->
-                <div class="hidden lg:flex items-center max-w-xs">
-                    <div class="relative w-full">
-                        <input type="text" placeholder="Rechercher..." class="w-full rounded-full py-2 px-4 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent shadow-lg transition-all duration-300 hover:shadow-yellow-400/50">
-                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-                            <svg class="h-5 w-5 text-gray-400 hover:text-yellow-400 transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                    </div>
+                <!-- Icônes de réseaux sociaux stylisées -->
+                <div class="hidden lg:flex items-center space-x-4">
+                    <a href="#" class="text-white hover:text-blue-600 transition-all duration-300 transform hover:scale-110 bg-blue-700 bg-opacity-30 backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center shadow-lg hover:shadow-xl">
+                        <i class="fab fa-facebook-f text-lg"></i>
+                    </a>
+                    <a href="#" class="text-white hover:text-blue-400 transition-all duration-300 transform hover:scale-110 bg-blue-700 bg-opacity-30 backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center shadow-lg hover:shadow-xl">
+                        <i class="fab fa-twitter text-lg"></i>
+                    </a>
+                    <a href="#" class="text-white hover:text-pink-500 transition-all duration-300 transform hover:scale-110 bg-blue-700 bg-opacity-30 backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center shadow-lg hover:shadow-xl">
+                        <i class="fab fa-instagram text-lg"></i>
+                    </a>
+                    <a href="#" class="text-white hover:text-blue-800 transition-all duration-300 transform hover:scale-110 bg-blue-700 bg-opacity-30 backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center shadow-lg hover:shadow-xl">
+                        <i class="fab fa-linkedin-in text-lg"></i>
+                    </a>
                 </div>
                 
                 <!-- Profil utilisateur -->

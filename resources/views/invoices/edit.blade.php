@@ -17,6 +17,38 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <div>
+                        <label for="quote_id" class="block text-sm font-medium text-gray-700 mb-2">Devis associé (optionnel)</label>
+                        <select name="quote_id" id="quote_id" class="form-input w-full">
+                            <option value="">Sélectionnez un devis (optionnel)</option>
+                            @foreach($quotes as $quote)
+                                <option value="{{ $quote->id }}" {{ $invoice->quote_id == $quote->id ? 'selected' : '' }}>
+                                    Devis #{{ $quote->id }} - {{ $quote->artisan->name ?? 'Artisan inconnu' }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('quote_id')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    
+                    <div>
+                        <label for="artisan_id" class="block text-sm font-medium text-gray-700 mb-2">Artisan (optionnel)</label>
+                        <select name="artisan_id" id="artisan_id" class="form-input w-full">
+                            <option value="">Sélectionnez un artisan (optionnel)</option>
+                            @foreach($quotes as $quote)
+                                @if($quote->artisan)
+                                    <option value="{{ $quote->artisan->id }}" {{ $invoice->artisan_id == $quote->artisan->id ? 'selected' : '' }}>
+                                        {{ $quote->artisan->name }}
+                                    </option>
+                                @endif
+                            @endforeach
+                        </select>
+                        @error('artisan_id')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    
+                    <div>
                         <label for="operation_type" class="block text-sm font-medium text-gray-700 mb-2">Type d'opération *</label>
                         <select name="operation_type" id="operation_type" class="form-input w-full" required>
                             <option value="purchase" {{ old('operation_type', $invoice->operation_type) == 'purchase' ? 'selected' : '' }}>Achat/Devis</option>
@@ -232,6 +264,24 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Initialiser itemIndex avec le nombre d'éléments existants ou 1
     let itemIndex = parseInt(document.getElementById('item-count').textContent);
+    
+    // Gérer la sélection du devis et mettre à jour l'artisan automatiquement
+    document.getElementById('quote_id').addEventListener('change', function() {
+        const quoteId = this.value;
+        const artisanSelect = document.getElementById('artisan_id');
+        
+        // Réinitialiser la sélection de l'artisan
+        artisanSelect.value = '';
+        
+        // Si un devis est sélectionné, trouver l'artisan associé
+        if (quoteId) {
+            // Trouver l'option du devis sélectionné
+            const selectedOption = this.options[this.selectedIndex];
+            // Mettre à jour l'artisan en conséquence
+            // Note: Nous pourrions faire une requête AJAX ici pour obtenir l'artisan associé au devis
+            // Pour l'instant, nous laissons l'utilisateur le sélectionner manuellement s'il le souhaite
+        }
+    });
     
     // Gérer l'affichage des champs spécifiques selon le type d'opération
     document.getElementById('operation_type').addEventListener('change', function() {

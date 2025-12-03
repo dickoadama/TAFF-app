@@ -37,7 +37,7 @@ class Invoice extends Model
 
     public function quote(): BelongsTo
     {
-        return $this->belongsTo(Quote::class);
+        return $this->belongsTo(Quote::class)->withDefault();
     }
 
     public function user(): BelongsTo

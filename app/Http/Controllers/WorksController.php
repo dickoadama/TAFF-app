@@ -10,4 +10,9 @@ class WorksController extends Controller
     {
         return view('works.index');
     }
+
+    public function gallery()
+    {
+        return view('works.gallery');
+    }
 }
