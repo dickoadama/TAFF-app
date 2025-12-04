@@ -1,1 +1,0 @@
-<img src="{{ asset('images/WhatsApp Image 2025-11-25 at 11.34.40.jpeg') }}" alt="Logo TAFF" class="w-10 h-10 object-contain rounded-full border-2 border-yellow-300 shadow-lg animate-pulse">
