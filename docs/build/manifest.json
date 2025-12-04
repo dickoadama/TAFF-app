@@ -1,0 +1,67 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-162a359a.css",
+    "isEntry": true,
+    "src": "resources/css/app.css"
+  },
+  "resources/css/embellishment.css": {
+    "file": "assets/embellishment-e91e6eab.css",
+    "isEntry": true,
+    "src": "resources/css/embellishment.css"
+  },
+  "resources/css/footer.css": {
+    "file": "assets/footer-87128831.css",
+    "isEntry": true,
+    "src": "resources/css/footer.css"
+  },
+  "resources/css/forms.css": {
+    "file": "assets/forms-1c22855e.css",
+    "isEntry": true,
+    "src": "resources/css/forms.css"
+  },
+  "resources/css/home.css": {
+    "file": "assets/home-66e28aea.css",
+    "isEntry": true,
+    "src": "resources/css/home.css"
+  },
+  "resources/css/placeholders.css": {
+    "file": "assets/placeholders-063ae854.css",
+    "isEntry": true,
+    "src": "resources/css/placeholders.css"
+  },
+  "resources/css/print-invoice.css": {
+    "file": "assets/print-invoice-29ee66aa.css",
+    "isEntry": true,
+    "src": "resources/css/print-invoice.css"
+  },
+  "resources/css/print-quote.css": {
+    "file": "assets/print-quote-d3daea96.css",
+    "isEntry": true,
+    "src": "resources/css/print-quote.css"
+  },
+  "resources/css/responsive.css": {
+    "file": "assets/responsive-6cc74840.css",
+    "isEntry": true,
+    "src": "resources/css/responsive.css"
+  },
+  "resources/css/tables.css": {
+    "file": "assets/tables-d8e9bb6f.css",
+    "isEntry": true,
+    "src": "resources/css/tables.css"
+  },
+  "resources/css/typography.css": {
+    "file": "assets/typography-d545f42a.css",
+    "isEntry": true,
+    "src": "resources/css/typography.css"
+  },
+  "resources/css/video-section.css": {
+    "file": "assets/video-section-ee3f849a.css",
+    "isEntry": true,
+    "src": "resources/css/video-section.css"
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-6a913cef.js",
+    "isEntry": true,
+    "src": "resources/js/app.js"
+  }
+}
