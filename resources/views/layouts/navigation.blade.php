@@ -158,14 +158,6 @@
                 
                 <!-- Profil utilisateur -->
                 <div class="relative">
-                    <!-- Notification Bell Icon -->
-                    <div class="relative mr-4">
-                        <button id="notification-bell" class="text-white hover:text-yellow-300 transition-colors duration-300 p-2 rounded-full hover:bg-white hover:bg-opacity-20">
-                            <i class="fas fa-bell text-xl"></i>
-                            <span id="notification-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
-                        </button>
-                    </div>
-                    
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
                             <button class="flex items-center text-sm font-bold text-yellow-300 hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-full transition duration-300 transform hover:scale-105 shadow-lg hover:shadow-yellow-400/30">
@@ -268,31 +260,6 @@
             const calendarContent = document.getElementById('calendar-content');
             const clockToggle = document.getElementById('clock-toggle');
             const clockContent = document.getElementById('clock-content');
-            const notificationBell = document.getElementById('notification-bell');
-            
-            // Fetch unread notifications count
-            function fetchUnreadNotifications() {
-                fetch('/notifications/unread')
-                    .then(response => response.json())
-                    .then(notifications => {
-                        const countElement = document.getElementById('notification-count');
-                        const count = notifications.length;
-                        
-                        if (count > 0) {
-                            countElement.textContent = count > 9 ? '9+' : count;
-                            countElement.classList.remove('hidden');
-                        } else {
-                            countElement.classList.add('hidden');
-                        }
-                    })
-                    .catch(error => console.error('Error fetching notifications:', error));
-            }
-            
-            // Fetch notifications on page load
-            fetchUnreadNotifications();
-            
-            // Refresh notifications every 30 seconds
-            setInterval(fetchUnreadNotifications, 30000);
             
             // Toggle calendar visibility
             calendarToggle.addEventListener('click', function() {
@@ -338,11 +305,6 @@
                         }, 200);
                     }
                 }
-            });
-            
-            // Toggle notifications dropdown
-            notificationBell.addEventListener('click', function() {
-                window.location.href = '/notifications';
             });
             
             // Close widgets when clicking elsewhere
