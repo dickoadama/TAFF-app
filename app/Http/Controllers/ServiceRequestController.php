@@ -87,12 +87,7 @@ class ServiceRequestController extends Controller
      */
     public function show($id)
     {
-        // Récupérer la demande de service avec ses relations
-        $serviceRequest = \App\Models\ServiceRequest::with(['serviceCategory', 'artisan', 'user'])
-            ->where('user_id', auth()->id()) // S'assurer que l'utilisateur a accès à cette demande
-            ->findOrFail($id);
-            
-        return view('service-requests.show', compact('serviceRequest'));
+        //
     }
 
     /**
